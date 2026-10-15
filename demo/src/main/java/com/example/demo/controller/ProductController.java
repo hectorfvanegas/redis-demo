@@ -31,4 +31,14 @@ public class ProductController {
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }
+
+    @PostMapping("/{id}/purchase")
+    public void processPurchase(@PathVariable Long id, @RequestParam Integer quantity) throws Exception {
+        service.processPurchase(id, quantity);
+    }
+
+    @PostMapping("/discount")
+    public void applyDiscount(@RequestParam Double discount) {
+        service.applyDiscount(discount);
+    }
 }

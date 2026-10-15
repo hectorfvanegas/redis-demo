@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 @Entity
+@Table(name = "product", indexes = {
+        @Index(name = "idx_product_name", columnList = "name")
+})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,4 +21,5 @@ public class Product implements Serializable {
 
     private String name;
     private Double price;
+    private Integer stock;
 }
