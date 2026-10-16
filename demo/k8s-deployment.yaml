@@ -1,0 +1,48 @@
+---
+# 1. SERVICIO: Expone la aplicación y balancea la carga
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-boot-demo-service
+spec:
+  type: LoadBalancer # En AWS usaría un ELB, en local expone un puerto
+  selector:
+    app: spring-boot-demo
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8081
+
+---
+# 2. DEPLOYMENT: Gestiona los pods y el auto-escalado
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-boot-demo-deployment
+spec:
+  replicas: 3 # Mantiene 3 copias de la app corriendo para Alta Disponibilidad
+  selector:
+    matchLabels:
+      app: spring-boot-demo
+  template:
+    metadata:
+      labels:
+        app: spring-boot-demo
+    spec:
+      containers:
+        - name: demo-app
+          image: spring-boot-demo:v1.0
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8081
+          resources:
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          # Health Checks (Liveness y Readiness)
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8081
+            initialDelaySeconds: 15
+            periodSeconds: 20
